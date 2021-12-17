@@ -1,0 +1,66 @@
+class Bird
+{
+  constructor(brain)
+  {
+    this.x=50;
+    this.y=height/2;
+    this.yv=0;
+    if(brain)
+    this.brain=brain.copy();
+    else
+    this.brain=new NeuralNetwork(5,40,1);
+    this.score=0;
+    this.fitness=0;
+  }
+  think(pipe)
+  {
+    var inputs=[];
+    if(pipe[0].x-this.x>=0||this.x-pipe[0].x<=pipeWidth)
+      closestPipe=pipe[0];
+    else {
+      closestPipe=pipe[1];
+    }
+    inputs[0]=this.yv;
+    inputs[1]=this.y;
+    inputs[2]=closestPipe.y;
+    inputs[3]=(closestPipe.y+spacing);
+    inputs[4]=closestPipe.x;
+    var output=this.brain.predict(inputs);
+    if(output[0]>0.5)
+    this.up();
+  }
+  show()
+  {
+    //image(birdImg,this.x,this.y,birdSize,birdSize);
+    fill(250,9,77);
+    ellipse(this.x,this.y,birdSize,birdSize);
+  }
+  update()
+  {
+    this.y+=this.yv;
+    this.yv+=gravity;
+    if(this.y>height||this.y<0)
+    this.yv=0;
+    if(this.y<0){
+      this.y=0;
+    this.yv=0;}
+    if(this.y>height)
+    {
+    this.yv=0;
+    this.y=height;
+    }
+    this.score++;
+  }
+  up()
+  {
+    this.yv=-jumpSpeed;
+    this.y+=this.yv;
+  }
+  Mutate(rate)
+  {
+    this.brain.weights_ih.mutate1(rate);
+    this.brain.weights_ho.mutate1(rate);
+    this.brain.bias_h.mutate1(rate);
+    this.brain.bias_o.mutate1(rate);
+  }
+}
